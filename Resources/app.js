@@ -1,101 +1,129 @@
-// this sets the background color of the master UIView (when there are no windows/tab groups on it)
-Titanium.UI.setBackgroundColor('#000');
+Ti.UI.setBackgroundColor("#ccc");
 
-// create tab group
-var tabGroup = Titanium.UI.createTabGroup();
-
-
-//
-// create base UI tab and root window
-//
-var win1 = Titanium.UI.createWindow({  
-    title:'Tab 1',
-    backgroundColor:'#fff'
+var mainWindow = Ti.UI.createWindow({
+	backgroundColor:"#6E6E6E"
 });
-var tab1 = Titanium.UI.createTab({  
-    icon:'KS_nav_views.png',
-    title:'Tab 1',
-    window:win1
-});
+//Data
+var theTAB = [
+{title: "NFL", description: "Whether you are on the east coast, west coast, the north or the south, Seeing a game has never been easier. Now with the click of a button you have the ability to see where your team is playing anywhere in your local neighborhood. Now get your gear on and don't be late!"}
+{title: "NBA", description: "It is that time of year again. The season has begun and don't fret on not having and NBA Season Pass. Seeing a game has never been easier. Now with the click of a button you have the ability to see where your team is playing anywhere in your local neighborhood. Now get your gear on and don't be late!"}
+{title: "MLB", description: "Remember going to your favorite ballparks as a kid and rooting on your team? Well, maybe now you have moved and your favorite team isn't on TV anymore. Seeing a game has never been easier. Do not worry! Now with the click of a button you have the ability to see where your team is playing anywhere in your local neighborhood. Now get your gear on and don't be late!"}
+{title: "NHL", description: "Nobody watches hockey anymore, right? Wrong!!! Seeing a game has never been easier. Now with the click of a button you have the ability to see where your team is playing anywhere in your local neighborhood. Now get your gear on and don't be late!"}
+];
 
-var label1 = Titanium.UI.createLabel({
-	color:'#999',
-	text:'I am Window 1',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	width:'auto'
-});
+var specialEvents = [
+{title: "Horse Racing", description: "It is that time of year again. The Belmont Stakes! The Derby! The Preakness! Seeing this special event has never been easier. Now with the click of a button you have the ability to see where it is playing anywhere in your local neighborhood. Now get ready and don't be late!"}
+{title: "Olympics", description: "You have been patiently waiting 4 years to see the worlds best compete to see who is crowned  the best in the world! Seeing this special event has never been easier. Now with the click of a button you have the ability to see where it is playing anywhere in your local neighborhood. Now get ready and don't be late!"}
+{title: "Boxing", description: "Nobody wants to pay $100 dollars to see a fight. Seeing this special event has never been easier. Now with the click of a button you have the ability to see where it is playing anywhere in your local neighborhood for free or with a cover. Don't worry we got you covered either way. Now get ready and don't be late!" }
+];
 
-win1.add(label1);
+var theTAB = [{title: "NFL"}, {title: "NBA"}, {title: "MLB"}, {title: "NHL"} ];
+var specialEvents = [{title: "Horse Racing"}, {title: "Olympics"}, {title: "Boxing"}];
 
-//
-// create controls tab and root window
-//
-var win2 = Titanium.UI.createWindow({  
-    title:'Tab 2',
-    backgroundColor:'#fff'
-});
-var tab2 = Titanium.UI.createTab({  
-    icon:'KS_nav_ui.png',
-    title:'Tab 2',
-    window:win2
+//Custom Table Header
+var tableHeader = Ti.UI.createView({
+	height: 50,
+	backgroundColor: "#00BFFF",
 });
 
-var label2 = Titanium.UI.createLabel({
-	color:'#999',
-	text:'I am Window 2',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	width:'auto'
+var headerText = Ti.UI.createLabel({
+	text: "Most Popular Sports",
+	font: {fontSize: 22, fontWeight: "bold"},
+	color: "#fff"
+});
+tableHeader.add(headerText);
+var titleView = Ti.UI.createView({
+	height: 60,
+	backgroundColor: "#fff",
+	top: 0
 });
 
-win2.add(label2);
-
-
-
-//
-//  add tabs
-//
-tabGroup.addTab(tab1);  
-tabGroup.addTab(tab2);  
-
-
-// open tab group
-tabGroup.open();
-
-
-// added during app creation. this will automatically login to
-// ACS for your application and then fire an event (see below)
-// when connected or errored. if you do not use ACS in your
-// application as a client, you should remove this block
-(function(){
-var ACS = require('ti.cloud'),
-    env = Ti.App.deployType.toLowerCase() === 'production' ? 'production' : 'development',
-    username = Ti.App.Properties.getString('acs-username-'+env),
-    password = Ti.App.Properties.getString('acs-password-'+env);
-
-// if not configured, just return
-if (!env || !username || !password) { return; }
-/**
- * Appcelerator Cloud (ACS) Admin User Login Logic
- *
- * fires login.success with the user as argument on success
- * fires login.failed with the result as argument on error
- */
-ACS.Users.login({
-	login:username,
-	password:password,
-}, function(result){
-	if (env==='development') {
-		Ti.API.info('ACS Login Results for environment `'+env+'`:');
-		Ti.API.info(result);
-	}
-	if (result && result.success && result.users && result.users.length){
-		Ti.App.fireEvent('login.success',result.users[0],env);
-	} else {
-		Ti.App.fireEvent('login.failed',result,env);
-	}
+var border = Ti.UI.createView({
+	backgroundColor: "#dbdbdb",
+	height: 1,
+	top: titleView.height + titleView.top
 });
 
-})();
+var titleLabel = Ti.UI.createLabel({
+	text: "What do you want to SEE!",
+	font: {fontSize: 20, fontFamily: "Californian FB", fontWeight: "bold"},
+	top: 20,
+	width: "100%",
+	textAlign: "center"
+});
 
+var sports = Ti.UI.createTableView({
+	top: border.top + border.height
+});
+
+if(Ti.Platform.name === "iPhone OS"){
+	sports.style = Ti.UI.iPhone.TableViewStyle.GROUPED;
+}
+
+var theTABSection = Ti.UI.createTableViewSection({
+	headerTitle: "Most Popular Sports",
+	footerTitle: "To Name a Few..."
+});
+
+var specialEventsSection = Ti.UI.createTableViewSection({
+	headerTitle: "Special Events",
+	footerTitle: "To Name a Few..."
+});
+
+for(var i=0, j=theTAB.length; i<j; i++){
+	var theRow = Ti.UI.createTableViewRow({
+		title: theTAB[i].title
+	});
+	theTABSection.add(theRow);
+}
+
+var getDetail = function (){
+	ver detailWindow = Ti.UI.createView({
+		backgroundColor :"#6E6E6E"
+	});
+	var detailTitleView = Ti.UI.createView({
+	height: 60,
+	backgroundColor: "#fff",
+	top: 0
+	});
+	
+	var detailBorder = Ti.UI.createView({
+		backgroundColor: "#dbdbdb",
+		height: 1,
+		top: detailTitleView.height + detailTitleView.top
+	});
+	
+	var detailTitleLabel = Ti.UI.createLabel({
+		text: this.title, 
+		font: {fontSize: 20, fontFamily: "Californian FB", fontWeight: "bold"},
+		top: 20,
+		width: "100%",
+		textAlign: "center"
+	});
+	
+	detailTitleView.add(detailTitleLabel);
+	detailWindow.add(detailTitleView, detailBorder);
+	
+	detailWindow.open();
+}
+
+for(var i=0, j=specialEvents.length; i<j; i++){
+	var theRow = Ti.UI.createTableViewRow({
+		title: specialEvents[i].title
+		hasChild: true
+	});
+	if(Ti.Platform.name === "iPhone OS"){
+	theRow.hasChild = false;
+	theRow.hasDetail = true;
+}
+
+	specialEventsSection.add(theRow);
+	theRow.addEventListener("click", getDetail);
+}
+
+var sportsSections = [theTABSection, specialEventsSection];
+sports.setData (sportsSections);
+
+titleView.add(titleLabel);
+mainWindow.add( titleView, border, sports);
+mainWindow.open();
